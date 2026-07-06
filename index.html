@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en" style="color-scheme: dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>The Long Count — a DawnDream specie aging ledger</title>
+        <meta
+            name="description"
+            content="Reckon the nights until your DawnDream character reaches a given age tier, accounting for rest and Velarium."
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg: #16110c;
+                --panel: #1f1811;
+                --panel-2: #281f15;
+                --line: #3a2e1e;
+                --line-soft: #2a2116;
+                --ink: #e8dcc3;
+                --ink-dim: #a9987a;
+                --ink-faint: #75695490;
+                --seal: #7c2020;
+                --seal-bright: #a8342f;
+                --brass: #b08d43;
+                --brass-bright: #d4ac5c;
+                --display: "Cinzel", serif;
+                --body: "EB Garamond", serif;
+                --mono: "IBM Plex Mono", monospace;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                background: var(--bg);
+                background-image:
+                    radial-gradient(
+                        ellipse at 20% 0%,
+                        rgba(124, 32, 32, 0.08),
+                        transparent 55%
+                    ),
+                    radial-gradient(
+                        ellipse at 85% 15%,
+                        rgba(176, 141, 67, 0.06),
+                        transparent 50%
+                    );
+                color: var(--ink);
+                font-family: var(--body);
+                font-size: 17px;
+                line-height: 1.6;
+            }
+
+            a {
+                color: var(--brass-bright);
+            }
+            a:hover {
+                color: var(--ink);
+            }
+
+            :focus-visible {
+                outline: 2px solid var(--brass-bright);
+                outline-offset: 3px;
+            }
+
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+
+            .page {
+                max-width: 760px;
+                margin: 0 auto;
+                padding: 4rem 1.5rem 5rem;
+            }
+
+            /* ---------- Hero ---------- */
+            .hero {
+                text-align: center;
+                margin-bottom: 3rem;
+            }
+
+            .hero .eyebrow {
+                font-family: var(--mono);
+                font-size: 12px;
+                letter-spacing: 0.22em;
+                text-transform: uppercase;
+                color: var(--brass);
+                margin: 0 0 0.9rem;
+            }
+
+            .hero h1 {
+                font-family: var(--display);
+                font-weight: 600;
+                font-size: clamp(2.1rem, 6vw, 3.1rem);
+                letter-spacing: 0.03em;
+                margin: 0 0 0.8rem;
+                color: var(--ink);
+            }
+
+            .hero p {
+                color: var(--ink-dim);
+                max-width: 46ch;
+                margin: 0 auto;
+                font-size: 1.05rem;
+            }
+
+            .hero .rule {
+                width: 120px;
+                height: 1px;
+                margin: 1.6rem auto 0;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    var(--brass),
+                    transparent
+                );
+            }
+
+            /* ---------- Panels ---------- */
+            .panel {
+                background: var(--panel);
+                border: 0.5px solid var(--line);
+                border-radius: 4px;
+                padding: 1.75rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .panel h2 {
+                font-family: var(--display);
+                font-weight: 600;
+                font-size: 1.05rem;
+                letter-spacing: 0.04em;
+                margin: 0 0 1.3rem;
+                color: var(--brass-bright);
+            }
+
+            /* ---------- Form ---------- */
+            .field-row {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 1.1rem;
+                flex-wrap: wrap;
+            }
+
+            .field-row label {
+                flex: 0 0 210px;
+                font-size: 0.92rem;
+                color: var(--ink-dim);
+            }
+
+            .field-row .control {
+                flex: 1;
+                min-width: 160px;
+            }
+
+            input[type="date"],
+            input[type="number"],
+            select {
+                width: 100%;
+                background: var(--bg);
+                border: 0.5px solid var(--line);
+                color: var(--ink);
+                font-family: var(--mono);
+                font-size: 0.95rem;
+                padding: 0.5rem 0.65rem;
+                border-radius: 3px;
+            }
+
+            select {
+                font-family: var(--body);
+                font-size: 0.98rem;
+            }
+
+            input[type="range"] {
+                width: 100%;
+                accent-color: var(--seal-bright);
+            }
+
+            input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                accent-color: var(--seal-bright);
+            }
+
+            .divider {
+                height: 0.5px;
+                background: var(--line-soft);
+                margin: 1.4rem 0;
+            }
+
+            .subhead {
+                font-family: var(--mono);
+                font-size: 11px;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+                color: var(--ink-faint);
+                margin: 0 0 1rem;
+            }
+
+            .range-out {
+                font-family: var(--mono);
+                font-size: 0.85rem;
+                color: var(--brass-bright);
+                min-width: 3ch;
+                text-align: right;
+                display: inline-block;
+            }
+
+            /* ---------- Result ---------- */
+            .result-grid {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 10px;
+                margin-bottom: 1.4rem;
+            }
+
+            .stat {
+                background: var(--panel-2);
+                border-radius: 3px;
+                padding: 0.9rem 1rem;
+            }
+
+            .stat .label {
+                font-family: var(--mono);
+                font-size: 10px;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                color: var(--ink-faint);
+                margin: 0 0 0.3rem;
+            }
+
+            .stat .value {
+                font-family: var(--mono);
+                font-size: 1.4rem;
+                color: var(--ink);
+            }
+
+            .current-tier {
+                text-align: center;
+                padding: 1.1rem 0 1.4rem;
+                border-bottom: 0.5px solid var(--line-soft);
+                margin-bottom: 1.4rem;
+            }
+
+            .current-tier .tag {
+                font-family: var(--mono);
+                font-size: 11px;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--ink-faint);
+                margin: 0 0 0.5rem;
+            }
+
+            .current-tier .name {
+                font-family: var(--display);
+                font-size: 1.6rem;
+                color: var(--seal-bright);
+            }
+
+            .projection {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                flex-wrap: wrap;
+                background: var(--panel-2);
+                border-radius: 3px;
+                padding: 1.1rem 1.3rem;
+            }
+
+            .projection .label {
+                font-family: var(--mono);
+                font-size: 11px;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--ink-faint);
+                margin: 0 0 0.35rem;
+            }
+
+            .projection .big {
+                font-family: var(--display);
+                font-size: 1.3rem;
+                color: var(--ink);
+            }
+
+            .projection .days {
+                font-family: var(--mono);
+                font-size: 1.3rem;
+                color: var(--brass-bright);
+                text-align: right;
+            }
+
+            /* ---------- Ledger ---------- */
+            .ledger-list {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            .ledger-row {
+                display: flex;
+                align-items: center;
+                gap: 0.9rem;
+                padding: 0.6rem 0.2rem;
+                border-bottom: 0.5px solid var(--line-soft);
+                position: relative;
+            }
+
+            .ledger-row:last-child {
+                border-bottom: none;
+            }
+
+            .flame {
+                flex: 0 0 14px;
+                width: 14px;
+                height: 14px;
+                visibility: hidden;
+            }
+
+            .ledger-row.active .flame {
+                visibility: visible;
+            }
+
+            .flame svg {
+                width: 14px;
+                height: 14px;
+                display: block;
+            }
+            .flame path {
+                fill: var(--seal-bright);
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+                .ledger-row.active .flame {
+                    animation: flicker 2.6s ease-in-out infinite;
+                    transform-origin: bottom center;
+                }
+            }
+
+            @keyframes flicker {
+                0%,
+                100% {
+                    transform: scale(1) translateY(0);
+                    opacity: 1;
+                }
+                30% {
+                    transform: scale(0.94, 1.05) translateY(-0.5px);
+                    opacity: 0.92;
+                }
+                60% {
+                    transform: scale(1.05, 0.96) translateY(0.5px);
+                    opacity: 1;
+                }
+            }
+
+            .ledger-row .name {
+                flex: 1;
+                font-size: 0.98rem;
+                color: var(--ink-dim);
+            }
+
+            .ledger-row.active .name {
+                color: var(--ink);
+                font-weight: 500;
+            }
+            .ledger-row.target .name {
+                color: var(--brass-bright);
+                font-weight: 500;
+            }
+
+            .ledger-row .threshold {
+                font-family: var(--mono);
+                font-size: 0.85rem;
+                color: var(--ink-faint);
+            }
+
+            .ledger-row.active .threshold,
+            .ledger-row.target .threshold {
+                color: var(--brass-bright);
+            }
+
+            /* ---------- Footer ---------- */
+            .note {
+                font-size: 0.9rem;
+                color: var(--ink-faint);
+                line-height: 1.7;
+            }
+
+            .hero > .note {
+                max-width: 100ch !important;
+                font-size: 0.9rem;
+                color: var(--ink-faint);
+                line-height: 1.7;
+            }
+
+            footer {
+                margin-top: 2.5rem;
+                text-align: center;
+                font-family: var(--mono);
+                font-size: 11px;
+                letter-spacing: 0.06em;
+                color: var(--ink-faint);
+            }
+
+            @media (max-width: 520px) {
+                .field-row label {
+                    flex-basis: 100%;
+                }
+                .result-grid {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .result-grid .stat:nth-child(3) {
+                    grid-column: span 2;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="page">
+            <header class="hero">
+                <p class="eyebrow" id="eyebrow">DawnDream · aging ledger</p>
+                <h1>The Long Count</h1>
+                <p>
+                    Reckon the nights between your embrace and the age you're
+                    reaching for — rest and Velarium included.
+                </p>
+                <div class="rule"></div>
+                <p class="note" id="footnote">
+                    Natural nights assumes one night of age per real night since
+                    your embrace. Enter your character's actual current age to
+                    capture whatever rest and Velarium have already earned you —
+                    the calculator works out the difference on its own. From
+                    tonight forward it assumes two extra nights for every week
+                    you rest, plus one for every ten Velarium spent. Your own
+                    pace may vary — adjust the figures above as your habits
+                    become clearer. Age tiers are drawn from the
+                    <a
+                        href="https://dawndreamwiki.com/wiki/index.php?title=Age_Groups"
+                        target="_blank"
+                        rel="noopener"
+                        >DawnDream wiki</a
+                    >. Nothing entered here is saved or sent anywhere — it lives
+                    only in your browser.
+                </p>
+            </header>
+
+            <main>
+                <section class="panel" aria-labelledby="ledger-entry-h">
+                    <h2 id="ledger-entry-h">Your ledger entry</h2>
+
+                    <div class="field-row">
+                        <label for="raceSelect">Race</label>
+                        <div class="control">
+                            <select id="raceSelect"></select>
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <label for="embraceDate">Date of embrace</label>
+                        <div class="control">
+                            <input type="date" id="embraceDate" value="" />
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <label for="curAgeInput">Current age, in days</label>
+                        <div class="control">
+                            <input
+                                type="number"
+                                id="curAgeInput"
+                                min="0"
+                                step="1"
+                                placeholder="e.g. 42"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+                    <p class="subhead">Going forward</p>
+
+                    <div class="field-row">
+                        <label for="restWeekly">Resting every week</label>
+                        <div class="control">
+                            <input type="checkbox" id="restWeekly" checked />
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <label for="velPerWeek">Velarium earned per week</label>
+                        <div
+                            class="control"
+                            style="
+                                display: flex;
+                                align-items: center;
+                                gap: 0.7rem;
+                            "
+                        >
+                            <input
+                                type="range"
+                                id="velPerWeek"
+                                min="0"
+                                max="100"
+                                step="5"
+                                value="10"
+                            />
+                            <span class="range-out" id="velPerWeekOut">10</span>
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <label for="targetTier">Target age tier</label>
+                        <div class="control">
+                            <select id="targetTier"></select>
+                        </div>
+                    </div>
+                </section>
+
+                <section
+                    class="panel"
+                    aria-live="polite"
+                    aria-labelledby="reckoning-h"
+                >
+                    <h2 id="reckoning-h">The reckoning</h2>
+
+                    <div class="result-grid">
+                        <div class="stat">
+                            <p class="label">Natural nights</p>
+                            <p class="value" id="natDaysOut">–</p>
+                        </div>
+                        <div class="stat">
+                            <p class="label">Extra nights banked</p>
+                            <p class="value" id="extraOut">–</p>
+                        </div>
+                        <div class="stat">
+                            <p class="label">Age in nights</p>
+                            <p class="value" id="curAgeOut">–</p>
+                        </div>
+                    </div>
+
+                    <div class="current-tier">
+                        <p class="tag">Currently reckoned as</p>
+                        <p class="name" id="curTierName">–</p>
+                    </div>
+
+                    <div class="projection">
+                        <div>
+                            <p class="label">Projected date</p>
+                            <p class="big" id="projDate">–</p>
+                        </div>
+                        <div>
+                            <p class="label">Nights from tonight</p>
+                            <p class="days" id="daysOut">–</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel" aria-labelledby="tiers-h">
+                    <h2 id="tiers-h">The full count</h2>
+                    <ul class="ledger-list" id="ledgerList"></ul>
+                </section>
+            </main>
+
+            <footer>the long count · a community tool for Dawndream</footer>
+        </div>
+
+        <script>
+            (function () {
+                // Each race's age tiers, in ascending day thresholds. Fill in "lycan"
+                // once real numbers are confirmed from the wiki — left empty on purpose
+                // rather than guessed, so nothing unverified reaches the community.
+                var RACES = {
+                    vampire: {
+                        label: "Vampire",
+                        tiers: [
+                            { name: "Fledgling", days: 0 },
+                            { name: "Children of the Night", days: 15 },
+                            { name: "Ancilla", days: 115 },
+                            { name: "Night Walker", days: 215 },
+                            { name: "Gehenna", days: 415 },
+                            { name: "Imperion", days: 615 },
+                            { name: "Paragon", days: 815 },
+                            { name: "Tiamat", days: 1015 },
+                            { name: "Apollyon", days: 1215 },
+                            { name: "Thanatos", days: 1465 },
+                            { name: "Nemesis", days: 1715 },
+                            { name: "Apocalypse", days: 2000 },
+                            { name: "Titan", days: 2300 },
+                            { name: "Eternety", days: 2600 },
+                            { name: "Armageddon", days: 2900 },
+                            { name: "Dragon of Destruction", days: 3250 },
+                            { name: "God of Death", days: 3750 },
+                            { name: "Seraphim", days: 20000 },
+                        ],
+                    },
+                    lycan: {
+                        label: "Lycan",
+                        tiers: [
+                            { name: "Young Wolf", days: 0 },
+                            { name: "Lunar Ascendant", days: 15 },
+                            { name: "Pack Hunter", days: 115 },
+                            { name: "Blood Tracker", days: 215 },
+                            { name: "Apex Predator", days: 415 },
+                            { name: "Beserker", days: 615 },
+                            { name: "Fenrir", days: 815 },
+                            { name: "Ragnarok", days: 1015 },
+                            { name: "Beast Dominus", days: 1215 },
+                            { name: "Night Tyrant", days: 1465 },
+                            { name: "Lunar Emperor", days: 1715 },
+                            { name: "Moon Titan", days: 2000 },
+                            { name: "Feral Overlord", days: 2300 },
+                            { name: "Primordial Beast", days: 2600 },
+                            { name: "Soul Devourer", days: 2900 },
+                            { name: "Abyssal Beast", days: 3250 },
+                            { name: "God of the Hunt", days: 3750 },
+                        ],
+                    },
+                };
+
+                var flameSVG =
+                    '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 3-3 4-3 8a3 3 0 0 0 6 0c0-1-.5-2-1-2 .8 1.6.2 3-1 3.4A2.6 2.6 0 0 1 10.8 9c0-2.4 2-3.4 1.2-7Z"/></svg>';
+
+                var raceSel = document.getElementById("raceSelect");
+                var targetSel = document.getElementById("targetTier");
+                var ledgerList = document.getElementById("ledgerList");
+                var eyebrow = document.getElementById("eyebrow");
+                var curAgeInput = document.getElementById("curAgeInput");
+                var curAgeTouched = false;
+
+                Object.keys(RACES).forEach(function (key) {
+                    var opt = document.createElement("option");
+                    opt.value = key;
+                    opt.textContent = RACES[key].label;
+                    raceSel.appendChild(opt);
+                });
+
+                curAgeInput.addEventListener("input", function () {
+                    curAgeTouched = true;
+                });
+
+                function currentTierName(tiers, age) {
+                    if (!tiers.length) return "–";
+                    var name = tiers[0].name;
+                    for (var i = 0; i < tiers.length; i++) {
+                        if (age >= tiers[i].days) name = tiers[i].name;
+                        else break;
+                    }
+                    return name;
+                }
+
+                function fmtDate(d) {
+                    return d.toLocaleDateString(undefined, {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                    });
+                }
+
+                function rebuildTiersUI() {
+                    var race = RACES[raceSel.value];
+                    eyebrow.textContent =
+                        "DawnDream · " + race.label + " lineage";
+
+                    targetSel.innerHTML = "";
+                    ledgerList.innerHTML = "";
+
+                    if (!race.tiers.length) {
+                        var opt = document.createElement("option");
+                        opt.textContent = "Age tiers coming soon";
+                        targetSel.appendChild(opt);
+                        var li = document.createElement("li");
+                        li.className = "ledger-row";
+                        li.innerHTML =
+                            '<span class="name">' +
+                            race.label +
+                            " age tiers haven't been added yet.</span>";
+                        ledgerList.appendChild(li);
+                        return;
+                    }
+
+                    race.tiers.forEach(function (t) {
+                        var o = document.createElement("option");
+                        o.value = t.days;
+                        o.textContent = t.name + " (" + t.days + " nights)";
+                        targetSel.appendChild(o);
+
+                        var li = document.createElement("li");
+                        li.className = "ledger-row";
+                        li.dataset.days = t.days;
+                        li.innerHTML =
+                            '<span class="flame">' +
+                            flameSVG +
+                            "</span>" +
+                            '<span class="name">' +
+                            t.name +
+                            "</span>" +
+                            '<span class="threshold">' +
+                            t.days +
+                            " nights</span>";
+                        ledgerList.appendChild(li);
+                    });
+
+                    var mid = race.tiers[Math.min(2, race.tiers.length - 1)];
+                    targetSel.value = mid.days;
+                }
+
+                function recalc() {
+                    var race = RACES[raceSel.value];
+                    var embrace = new Date(
+                        document.getElementById("embraceDate").value +
+                            "T00:00:00",
+                    );
+                    var today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    var restWeekly =
+                        document.getElementById("restWeekly").checked;
+                    var velPerWeek = Number(
+                        document.getElementById("velPerWeek").value,
+                    );
+                    document.getElementById("velPerWeekOut").textContent =
+                        velPerWeek;
+
+                    var natDays = Math.max(
+                        0,
+                        Math.round((today - embrace) / 86400000),
+                    );
+
+                    if (!curAgeTouched) curAgeInput.value = natDays;
+                    var curAge =
+                        curAgeInput.value === ""
+                            ? natDays
+                            : Number(curAgeInput.value);
+                    var extra = curAge - natDays;
+
+                    document.getElementById("natDaysOut").textContent = natDays;
+                    document.getElementById("extraOut").textContent =
+                        (extra >= 0 ? "+" : "") + extra;
+                    document.getElementById("curAgeOut").textContent = curAge;
+                    document.getElementById("curTierName").textContent =
+                        currentTierName(race.tiers, curAge);
+
+                    if (!race.tiers.length) {
+                        document.getElementById("projDate").textContent = "–";
+                        document.getElementById("daysOut").textContent = "–";
+                        return;
+                    }
+
+                    var target = Number(targetSel.value);
+                    var remaining = target - curAge;
+                    var dailyRate =
+                        1 + (restWeekly ? 2 / 7 : 0) + velPerWeek / 10 / 7;
+
+                    if (remaining <= 0) {
+                        document.getElementById("projDate").textContent =
+                            "Already reached";
+                        document.getElementById("daysOut").textContent = "0";
+                    } else {
+                        var daysNeeded = Math.ceil(remaining / dailyRate);
+                        var projDate = new Date(today);
+                        projDate.setDate(projDate.getDate() + daysNeeded);
+                        document.getElementById("projDate").textContent =
+                            fmtDate(projDate);
+                        document.getElementById("daysOut").textContent =
+                            daysNeeded;
+                    }
+
+                    var reached = race.tiers.filter(function (t) {
+                        return curAge >= t.days;
+                    });
+                    var activeDays = reached.length
+                        ? reached[reached.length - 1].days
+                        : null;
+                    var rows = ledgerList.querySelectorAll(".ledger-row");
+                    rows.forEach(function (row) {
+                        var d = Number(row.dataset.days);
+                        row.classList.toggle("active", d === activeDays);
+                        row.classList.toggle("target", d === target);
+                    });
+                }
+
+                raceSel.addEventListener("change", function () {
+                    rebuildTiersUI();
+                    recalc();
+                });
+
+                [
+                    "embraceDate",
+                    "curAgeInput",
+                    "restWeekly",
+                    "velPerWeek",
+                    "targetTier",
+                ].forEach(function (id) {
+                    document
+                        .getElementById(id)
+                        .addEventListener("input", recalc);
+                });
+
+                rebuildTiersUI();
+                recalc();
+            })();
+        </script>
+    </body>
+</html>
