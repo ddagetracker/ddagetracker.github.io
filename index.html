@@ -89,6 +89,37 @@
                 padding: 4rem 1.5rem 5rem;
             }
 
+            /* ---------- Language switch ---------- */
+            .lang-switch {
+                display: flex;
+                justify-content: center;
+                gap: 0.9rem;
+                margin-bottom: 2rem;
+                font-family: var(--mono);
+                font-size: 11px;
+                letter-spacing: 0.1em;
+            }
+
+            .lang-switch button {
+                background: none;
+                border: none;
+                padding: 2px 3px;
+                margin: 0;
+                font-family: inherit;
+                font-size: inherit;
+                letter-spacing: inherit;
+                color: var(--ink-faint);
+                cursor: pointer;
+            }
+
+            .lang-switch button:hover {
+                color: var(--ink);
+            }
+
+            .lang-switch button.active {
+                color: var(--brass-bright);
+            }
+
             /* ---------- Hero ---------- */
             .hero {
                 text-align: center;
@@ -434,10 +465,23 @@
     </head>
     <body>
         <div class="page">
+            <div
+                class="lang-switch"
+                id="langSwitch"
+                role="group"
+                aria-label="Language"
+            >
+                <button type="button" data-lang="en">EN</button>
+                <button type="button" data-lang="fr">FR</button>
+                <button type="button" data-lang="es">ES</button>
+                <button type="button" data-lang="it">IT</button>
+                <button type="button" data-lang="pt">PT</button>
+            </div>
+
             <header class="hero">
                 <p class="eyebrow" id="eyebrow">DawnDream · aging ledger</p>
-                <h1>The Long Count</h1>
-                <p>
+                <h1 data-i18n="heroTitle">The Long Count</h1>
+                <p data-i18n="heroSubtitle">
                     Reckon the nights between your embrace and the age you're
                     reaching for — rest and Velarium included.
                 </p>
@@ -463,24 +507,32 @@
 
             <main>
                 <section class="panel" aria-labelledby="ledger-entry-h">
-                    <h2 id="ledger-entry-h">Your ledger entry</h2>
+                    <h2 id="ledger-entry-h" data-i18n="sectionLedger">
+                        Your ledger entry
+                    </h2>
 
                     <div class="field-row">
-                        <label for="raceSelect">Race</label>
+                        <label for="raceSelect" data-i18n="raceLabel"
+                            >Race</label
+                        >
                         <div class="control">
                             <select id="raceSelect"></select>
                         </div>
                     </div>
 
                     <div class="field-row">
-                        <label for="embraceDate">Date of embrace</label>
+                        <label for="embraceDate" data-i18n="embraceLabel"
+                            >Date of embrace</label
+                        >
                         <div class="control">
                             <input type="date" id="embraceDate" value="" />
                         </div>
                     </div>
 
                     <div class="field-row">
-                        <label for="curAgeInput">Current age, in days</label>
+                        <label for="curAgeInput" data-i18n="curAgeLabel"
+                            >Current age, in days</label
+                        >
                         <div class="control">
                             <input
                                 type="number"
@@ -488,22 +540,29 @@
                                 min="0"
                                 step="1"
                                 placeholder="e.g. 42"
+                                data-i18n-placeholder="curAgePlaceholder"
                             />
                         </div>
                     </div>
 
                     <div class="divider"></div>
-                    <p class="subhead">Going forward</p>
+                    <p class="subhead" data-i18n="subheadForward">
+                        Going forward
+                    </p>
 
                     <div class="field-row">
-                        <label for="restWeekly">Resting every week</label>
+                        <label for="restWeekly" data-i18n="restLabel"
+                            >Resting every week</label
+                        >
                         <div class="control">
                             <input type="checkbox" id="restWeekly" checked />
                         </div>
                     </div>
 
                     <div class="field-row">
-                        <label for="velPerWeek">Velarium earned per week</label>
+                        <label for="velPerWeek" data-i18n="velLabel"
+                            >Velarium earned per week</label
+                        >
                         <div
                             class="control"
                             style="
@@ -525,7 +584,9 @@
                     </div>
 
                     <div class="field-row">
-                        <label for="targetTier">Target age tier</label>
+                        <label for="targetTier" data-i18n="targetLabel"
+                            >Target age tier</label
+                        >
                         <div class="control">
                             <select id="targetTier"></select>
                         </div>
@@ -537,51 +598,372 @@
                     aria-live="polite"
                     aria-labelledby="reckoning-h"
                 >
-                    <h2 id="reckoning-h">The reckoning</h2>
+                    <h2 id="reckoning-h" data-i18n="sectionReckoning">
+                        The reckoning
+                    </h2>
 
                     <div class="result-grid">
                         <div class="stat">
-                            <p class="label">Natural nights</p>
+                            <p class="label" data-i18n="statNatural">
+                                Natural nights
+                            </p>
                             <p class="value" id="natDaysOut">–</p>
                         </div>
                         <div class="stat">
-                            <p class="label">Extra nights banked</p>
+                            <p class="label" data-i18n="statExtra">
+                                Extra nights banked
+                            </p>
                             <p class="value" id="extraOut">–</p>
                         </div>
                         <div class="stat">
-                            <p class="label">Age in nights</p>
+                            <p class="label" data-i18n="statCurAge">
+                                Age in nights
+                            </p>
                             <p class="value" id="curAgeOut">–</p>
                         </div>
                     </div>
 
                     <div class="current-tier">
-                        <p class="tag">Currently reckoned as</p>
+                        <p class="tag" data-i18n="tagCurrent">
+                            Currently reckoned as
+                        </p>
                         <p class="name" id="curTierName">–</p>
                     </div>
 
                     <div class="projection">
                         <div>
-                            <p class="label">Projected date</p>
+                            <p class="label" data-i18n="projLabel">
+                                Projected date
+                            </p>
                             <p class="big" id="projDate">–</p>
                         </div>
                         <div>
-                            <p class="label">Nights from tonight</p>
+                            <p class="label" data-i18n="daysLabel">
+                                Nights from tonight
+                            </p>
                             <p class="days" id="daysOut">–</p>
                         </div>
                     </div>
                 </section>
 
                 <section class="panel" aria-labelledby="tiers-h">
-                    <h2 id="tiers-h">The full count</h2>
+                    <h2 id="tiers-h" data-i18n="sectionFullCount">
+                        The full count
+                    </h2>
                     <ul class="ledger-list" id="ledgerList"></ul>
                 </section>
             </main>
 
-            <footer>the long count · a community tool for Dawndream</footer>
+            <footer data-i18n="footerText">
+                the long count · a community tool for Dawndream
+            </footer>
         </div>
 
         <script>
             (function () {
+                // UI text only. Race labels and tier names are intentionally
+                // left out of this dictionary and out of applyStaticI18n() —
+                // per the community's preference, those stay in English in
+                // every language.
+                var I18N = {
+                    en: {
+                        docTitle:
+                            "The Long Count — a DawnDream specie aging ledger",
+                        metaDescription:
+                            "Reckon the nights until your DawnDream character reaches a given age tier, accounting for rest and Velarium.",
+                        heroTitle: "The Long Count",
+                        heroSubtitle:
+                            "Reckon the nights between your embrace and the age you're reaching for — rest and Velarium included.",
+                        footnotePre:
+                            "Natural nights assumes one night of age per real night since your embrace. Enter your character's actual current age to capture whatever rest and Velarium have already earned you — the calculator works out the difference on its own. From tonight forward it assumes two extra nights for every week you rest, plus one for every ten Velarium spent. Your own pace may vary — adjust the figures above as your habits become clearer. Age tiers are drawn from the ",
+                        footnoteLink: "DawnDream wiki",
+                        footnotePost:
+                            ". Nothing entered here is saved or sent anywhere — it lives only in your browser.",
+                        sectionLedger: "Your ledger entry",
+                        raceLabel: "Race",
+                        embraceLabel: "Date of embrace",
+                        curAgeLabel: "Current age, in days",
+                        curAgePlaceholder: "e.g. 42",
+                        subheadForward: "Going forward",
+                        restLabel: "Resting every week",
+                        velLabel: "Velarium earned per week",
+                        targetLabel: "Target age tier",
+                        sectionReckoning: "The reckoning",
+                        statNatural: "Natural nights",
+                        statExtra: "Extra nights banked",
+                        statCurAge: "Age in nights",
+                        tagCurrent: "Currently reckoned as",
+                        projLabel: "Projected date",
+                        daysLabel: "Nights from tonight",
+                        sectionFullCount: "The full count",
+                        footerText:
+                            "the long count · a community tool for Dawndream",
+                        eyebrowTemplate: "DawnDream · {race} lineage",
+                        tiersComingSoon: "Age tiers coming soon",
+                        tiersNotAdded:
+                            "{race} age tiers haven't been added yet.",
+                        nightsWord: "nights",
+                        alreadyReached: "Already reached",
+                    },
+                    fr: {
+                        docTitle:
+                            "Le Long Compte — un registre de vieillissement des espèces DawnDream",
+                        metaDescription:
+                            "Comptez les nuits avant que votre personnage DawnDream n'atteigne un palier d'âge donné, en tenant compte du repos et du Velarium.",
+                        heroTitle: "Le Long Compte",
+                        heroSubtitle:
+                            "Comptez les nuits entre votre Étreinte et l'âge que vous visez — repos et Velarium inclus.",
+                        footnotePre:
+                            "Les nuits naturelles supposent une nuit d'âge par nuit réelle depuis votre Étreinte. Indiquez l'âge actuel réel de votre personnage pour intégrer ce que le repos et le Velarium vous ont déjà rapporté — le calculateur détermine seul la différence. À partir de ce soir, il suppose deux nuits supplémentaires par semaine de repos, plus une nuit toutes les dix Velarium dépensés. Votre propre rythme peut varier — ajustez les valeurs ci-dessus à mesure que vos habitudes se précisent. Les paliers d'âge proviennent du ",
+                        footnoteLink: "wiki DawnDream",
+                        footnotePost:
+                            ". Rien de ce qui est saisi ici n'est enregistré ni envoyé ailleurs — tout reste dans votre navigateur.",
+                        sectionLedger: "Votre registre",
+                        raceLabel: "Race",
+                        embraceLabel: "Date de l'Étreinte",
+                        curAgeLabel: "Âge actuel, en jours",
+                        curAgePlaceholder: "ex. 42",
+                        subheadForward: "À partir de maintenant",
+                        restLabel: "Se reposer chaque semaine",
+                        velLabel: "Velarium gagné par semaine",
+                        targetLabel: "Palier d'âge visé",
+                        sectionReckoning: "Le compte",
+                        statNatural: "Nuits naturelles",
+                        statExtra: "Nuits supplémentaires accumulées",
+                        statCurAge: "Âge en nuits",
+                        tagCurrent: "Actuellement considéré comme",
+                        projLabel: "Date projetée",
+                        daysLabel: "Nuits à partir de ce soir",
+                        sectionFullCount: "Le compte complet",
+                        footerText:
+                            "le long compte · un outil communautaire pour Dawndream",
+                        eyebrowTemplate: "DawnDream · lignée {race}",
+                        tiersComingSoon: "Paliers d'âge à venir",
+                        tiersNotAdded:
+                            "Les paliers d'âge pour {race} n'ont pas encore été ajoutés.",
+                        nightsWord: "nuits",
+                        alreadyReached: "Déjà atteint",
+                    },
+                    es: {
+                        docTitle:
+                            "La Cuenta Larga — un registro de envejecimiento de especies de DawnDream",
+                        metaDescription:
+                            "Cuenta las noches hasta que tu personaje de DawnDream alcance un nivel de edad determinado, teniendo en cuenta el descanso y el Velarium.",
+                        heroTitle: "La Cuenta Larga",
+                        heroSubtitle:
+                            "Cuenta las noches entre tu Abrazo y la edad que buscas alcanzar — descanso y Velarium incluidos.",
+                        footnotePre:
+                            "Las noches naturales suponen una noche de edad por cada noche real desde tu Abrazo. Introduce la edad actual real de tu personaje para capturar lo que el descanso y el Velarium ya te hayan aportado — la calculadora determina la diferencia por sí sola. A partir de esta noche, se asume que ganas dos noches extra por cada semana de descanso, más una por cada diez Velarium gastados. Tu propio ritmo puede variar — ajusta las cifras anteriores a medida que tus hábitos se aclaren. Los niveles de edad provienen del ",
+                        footnoteLink: "wiki de DawnDream",
+                        footnotePost:
+                            ". Nada de lo que introduzcas aquí se guarda ni se envía a ningún sitio — permanece solo en tu navegador.",
+                        sectionLedger: "Tu registro",
+                        raceLabel: "Raza",
+                        embraceLabel: "Fecha del Abrazo",
+                        curAgeLabel: "Edad actual, en días",
+                        curAgePlaceholder: "ej. 42",
+                        subheadForward: "De aquí en adelante",
+                        restLabel: "Descansas cada semana",
+                        velLabel: "Velarium ganado por semana",
+                        targetLabel: "Nivel de edad objetivo",
+                        sectionReckoning: "El recuento",
+                        statNatural: "Noches naturales",
+                        statExtra: "Noches extra acumuladas",
+                        statCurAge: "Edad en noches",
+                        tagCurrent: "Actualmente considerado como",
+                        projLabel: "Fecha proyectada",
+                        daysLabel: "Noches a partir de esta noche",
+                        sectionFullCount: "El recuento completo",
+                        footerText:
+                            "la cuenta larga · una herramienta comunitaria para Dawndream",
+                        eyebrowTemplate: "DawnDream · linaje {race}",
+                        tiersComingSoon: "Niveles de edad próximamente",
+                        tiersNotAdded:
+                            "Los niveles de edad de {race} aún no se han añadido.",
+                        nightsWord: "noches",
+                        alreadyReached: "Ya alcanzado",
+                    },
+                    it: {
+                        docTitle:
+                            "Il Lungo Computo — un registro d'invecchiamento delle specie DawnDream",
+                        metaDescription:
+                            "Conta le notti prima che il tuo personaggio DawnDream raggiunga una determinata fascia d'età, tenendo conto del riposo e del Velarium.",
+                        heroTitle: "Il Lungo Computo",
+                        heroSubtitle:
+                            "Conta le notti tra il tuo Abbraccio e l'età che vuoi raggiungere — riposo e Velarium inclusi.",
+                        footnotePre:
+                            "Le notti naturali presuppongono una notte d'età per ogni notte reale trascorsa dal tuo Abbraccio. Inserisci l'età attuale reale del tuo personaggio per includere ciò che il riposo e il Velarium ti hanno già fruttato — il calcolatore determina da solo la differenza. Da questa notte in poi, si presume che tu guadagni due notti extra per ogni settimana di riposo, più una ogni dieci Velarium spesi. Il tuo ritmo personale può variare — modifica i valori sopra man mano che le tue abitudini diventano più chiare. Le fasce d'età provengono dal ",
+                        footnoteLink: "wiki di DawnDream",
+                        footnotePost:
+                            ". Nulla di ciò che inserisci qui viene salvato o inviato altrove — resta solo nel tuo browser.",
+                        sectionLedger: "Il tuo registro",
+                        raceLabel: "Razza",
+                        embraceLabel: "Data dell'Abbraccio",
+                        curAgeLabel: "Età attuale, in giorni",
+                        curAgePlaceholder: "es. 42",
+                        subheadForward: "Da qui in avanti",
+                        restLabel: "Riposo ogni settimana",
+                        velLabel: "Velarium guadagnato a settimana",
+                        targetLabel: "Fascia d'età obiettivo",
+                        sectionReckoning: "Il computo",
+                        statNatural: "Notti naturali",
+                        statExtra: "Notti extra accumulate",
+                        statCurAge: "Età in notti",
+                        tagCurrent: "Attualmente considerato come",
+                        projLabel: "Data prevista",
+                        daysLabel: "Notti da questa sera",
+                        sectionFullCount: "Il computo completo",
+                        footerText:
+                            "il lungo computo · uno strumento comunitario per Dawndream",
+                        eyebrowTemplate: "DawnDream · lignaggio {race}",
+                        tiersComingSoon: "Fasce d'età in arrivo",
+                        tiersNotAdded:
+                            "Le fasce d'età per {race} non sono ancora state aggiunte.",
+                        nightsWord: "notti",
+                        alreadyReached: "Già raggiunto",
+                    },
+                    pt: {
+                        docTitle:
+                            "A Longa Contagem — um registro de envelhecimento de espécies DawnDream",
+                        metaDescription:
+                            "Conte as noites até seu personagem de DawnDream alcançar um determinado nível de idade, considerando o descanso e o Velarium.",
+                        heroTitle: "A Longa Contagem",
+                        heroSubtitle:
+                            "Conte as noites entre o seu Abraço e a idade que você quer alcançar — descanso e Velarium incluídos.",
+                        footnotePre:
+                            "As noites naturais presumem uma noite de idade para cada noite real desde o seu Abraço. Informe a idade atual real do seu personagem para capturar o que o descanso e o Velarium já renderam a você — a calculadora descobre a diferença sozinha. A partir de hoje à noite, presume-se que você ganhe duas noites extras por semana de descanso, além de uma para cada dez Velarium gastos. Seu próprio ritmo pode variar — ajuste os valores acima conforme seus hábitos ficarem mais claros. Os níveis de idade vêm da ",
+                        footnoteLink: "wiki da DawnDream",
+                        footnotePost:
+                            ". Nada do que é inserido aqui é salvo ou enviado a lugar nenhum — tudo fica apenas no seu navegador.",
+                        sectionLedger: "Seu registro",
+                        raceLabel: "Raça",
+                        embraceLabel: "Data do Abraço",
+                        curAgeLabel: "Idade atual, em dias",
+                        curAgePlaceholder: "ex.: 42",
+                        subheadForward: "Daqui para frente",
+                        restLabel: "Descansando toda semana",
+                        velLabel: "Velarium ganho por semana",
+                        targetLabel: "Nível de idade alvo",
+                        sectionReckoning: "A contagem",
+                        statNatural: "Noites naturais",
+                        statExtra: "Noites extras acumuladas",
+                        statCurAge: "Idade em noites",
+                        tagCurrent: "Atualmente reconhecido como",
+                        projLabel: "Data prevista",
+                        daysLabel: "Noites a partir de hoje",
+                        sectionFullCount: "A contagem completa",
+                        footerText:
+                            "a longa contagem · uma ferramenta comunitária para Dawndream",
+                        eyebrowTemplate: "DawnDream · linhagem {race}",
+                        tiersComingSoon: "Níveis de idade em breve",
+                        tiersNotAdded:
+                            "Os níveis de idade de {race} ainda não foram adicionados.",
+                        nightsWord: "noites",
+                        alreadyReached: "Já alcançado",
+                    },
+                };
+
+                var LANG_STORAGE_KEY = "longcount-lang";
+                var DATE_LOCALES = {
+                    en: "en-US",
+                    fr: "fr-FR",
+                    es: "es-ES",
+                    it: "it-IT",
+                    pt: "pt-BR",
+                };
+
+                function getInitialLang() {
+                    try {
+                        var saved = localStorage.getItem(LANG_STORAGE_KEY);
+                        if (saved && I18N[saved]) return saved;
+                    } catch (e) {}
+                    var nav = (
+                        (navigator.language || "en").split("-")[0] || "en"
+                    ).toLowerCase();
+                    return I18N[nav] ? nav : "en";
+                }
+
+                var currentLang = getInitialLang();
+
+                function tr(key) {
+                    return (
+                        (I18N[currentLang] && I18N[currentLang][key]) ||
+                        I18N.en[key] ||
+                        ""
+                    );
+                }
+
+                function fmt(template, vars) {
+                    return template.replace(/\{(\w+)\}/g, function (_, k) {
+                        return vars[k];
+                    });
+                }
+
+                function applyStaticI18n() {
+                    document.documentElement.lang =
+                        currentLang === "pt" ? "pt-BR" : currentLang;
+                    document.title = tr("docTitle");
+
+                    var metaDesc = document.querySelector(
+                        'meta[name="description"]',
+                    );
+                    if (metaDesc)
+                        metaDesc.setAttribute("content", tr("metaDescription"));
+
+                    document
+                        .querySelectorAll("[data-i18n]")
+                        .forEach(function (el) {
+                            el.textContent = tr(el.getAttribute("data-i18n"));
+                        });
+
+                    document
+                        .querySelectorAll("[data-i18n-placeholder]")
+                        .forEach(function (el) {
+                            el.setAttribute(
+                                "placeholder",
+                                tr(el.getAttribute("data-i18n-placeholder")),
+                            );
+                        });
+
+                    var footnote = document.getElementById("footnote");
+                    if (footnote) {
+                        footnote.innerHTML =
+                            tr("footnotePre") +
+                            '<a href="https://dawndreamwiki.com/wiki/index.php?title=Age_Groups" target="_blank" rel="noopener">' +
+                            tr("footnoteLink") +
+                            "</a>" +
+                            tr("footnotePost");
+                    }
+
+                    document
+                        .querySelectorAll(".lang-switch button")
+                        .forEach(function (btn) {
+                            btn.classList.toggle(
+                                "active",
+                                btn.dataset.lang === currentLang,
+                            );
+                        });
+                }
+
+                function setLang(lang) {
+                    if (!I18N[lang] || lang === currentLang) return;
+                    currentLang = lang;
+                    try {
+                        localStorage.setItem(LANG_STORAGE_KEY, lang);
+                    } catch (e) {}
+                    applyStaticI18n();
+                    rebuildTiersUI();
+                    recalc();
+                }
+
+                document
+                    .querySelectorAll(".lang-switch button")
+                    .forEach(function (btn) {
+                        btn.addEventListener("click", function () {
+                            setLang(btn.dataset.lang);
+                        });
+                    });
+
                 // Each race's age tiers, in ascending day thresholds. Fill in "lycan"
                 // once real numbers are confirmed from the wiki — left empty on purpose
                 // rather than guessed, so nothing unverified reaches the community.
@@ -687,31 +1069,35 @@
                 }
 
                 function fmtDate(d) {
-                    return d.toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                    });
+                    return d.toLocaleDateString(
+                        DATE_LOCALES[currentLang] || "en-US",
+                        {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                        },
+                    );
                 }
 
                 function rebuildTiersUI() {
                     var race = RACES[raceSel.value];
-                    eyebrow.textContent =
-                        "DawnDream · " + race.label + " lineage";
+                    eyebrow.textContent = fmt(tr("eyebrowTemplate"), {
+                        race: race.label,
+                    });
 
                     targetSel.innerHTML = "";
                     ledgerList.innerHTML = "";
 
                     if (!race.tiers.length) {
                         var opt = document.createElement("option");
-                        opt.textContent = "Age tiers coming soon";
+                        opt.textContent = tr("tiersComingSoon");
                         targetSel.appendChild(opt);
                         var li = document.createElement("li");
                         li.className = "ledger-row";
                         li.innerHTML =
                             '<span class="name">' +
-                            race.label +
-                            " age tiers haven't been added yet.</span>";
+                            fmt(tr("tiersNotAdded"), { race: race.label }) +
+                            "</span>";
                         ledgerList.appendChild(li);
                         return;
                     }
@@ -719,7 +1105,13 @@
                     race.tiers.forEach(function (t) {
                         var o = document.createElement("option");
                         o.value = t.days;
-                        o.textContent = t.name + " (" + t.days + " nights)";
+                        o.textContent =
+                            t.name +
+                            " (" +
+                            t.days +
+                            " " +
+                            tr("nightsWord") +
+                            ")";
                         targetSel.appendChild(o);
 
                         var li = document.createElement("li");
@@ -734,7 +1126,9 @@
                             "</span>" +
                             '<span class="threshold">' +
                             t.days +
-                            " nights</span>";
+                            " " +
+                            tr("nightsWord") +
+                            "</span>";
                         ledgerList.appendChild(li);
                     });
 
@@ -791,7 +1185,7 @@
 
                     if (remaining <= 0) {
                         document.getElementById("projDate").textContent =
-                            "Already reached";
+                            tr("alreadyReached");
                         document.getElementById("daysOut").textContent = "0";
                     } else {
                         var daysNeeded = Math.ceil(remaining / dailyRate);
@@ -834,6 +1228,7 @@
                         .addEventListener("input", recalc);
                 });
 
+                applyStaticI18n();
                 rebuildTiersUI();
                 recalc();
             })();
